@@ -1,0 +1,54 @@
+import org.gradle.internal.os.OperatingSystem
+
+plugins {
+    id 'java'
+    id 'application'
+    id 'org.beryx.jlink' version '2.23.1'
+}
+
+switch (OperatingSystem.current()) {
+    case OperatingSystem.LINUX:
+        project.ext.platform = "linux"
+        break
+    case OperatingSystem.MAC_OS:
+        project.ext.platform = "mac"
+        break
+    case OperatingSystem.WINDOWS:
+        project.ext.platform = "win"
+        break
+}
+
+group 'ru.falseresync'
+version '0.1.0'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.openjfx:javafx-base:15.0.1:${platform}"
+    implementation "org.openjfx:javafx-controls:15.0.1:${platform}"
+    implementation "org.openjfx:javafx-graphics:15.0.1:${platform}"
+    implementation "org.openjfx:javafx-fxml:15.0.1:${platform}"
+    implementation 'com.fasterxml.jackson.core:jackson-core:2.12.1'
+    implementation 'com.fasterxml.jackson.core:jackson-annotations:2.12.1'
+    implementation 'com.fasterxml.jackson.core:jackson-databind:2.12.1'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.12.1'
+}
+
+java {
+    modularity.inferModulePath = true
+}
+
+application {
+    mainModule = 'packbrew.main'
+    mainClass = 'ru.falseresync.packbrew.Main'
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs += ['--enable-preview']
+}
+
+tasks.withType(JavaExec) {
+    jvmArgs += '--enable-preview'
+}
